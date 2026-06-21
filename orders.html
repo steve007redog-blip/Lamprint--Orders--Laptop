@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Orders</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+
+<body>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">All Orders</h1>
+
+        <!-- FILTER BUTTONS -->
+        <div class="mb-3 text-center">
+            <button id="filterAll" class="btn btn-secondary">All</button>
+            <button id="filterPending" class="btn btn-warning">Pending</button>
+            <button id="filterPartial" class="btn btn-info">Partially Supplied</button>
+            <button id="filterFull" class="btn btn-success">Fully Supplied</button>
+        </div>
+
+        <!-- ORDERS TABLE -->
+        <table id="ordersTable" class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Supplier</th>
+                    <th>Status</th>
+                    <th>Items</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filled by orders.js -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SCRIPT MUST BE LAST -->
+    <script src="js/orders.js?v=2"></script>
+
+</body>
+</html>

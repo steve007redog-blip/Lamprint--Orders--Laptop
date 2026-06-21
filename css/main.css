@@ -1,0 +1,131 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Container styling */
+.container {
+    border-radius: 5px;
+    color: #1a1a1a;
+    background-color: #f2f2f2;
+    padding: 20px;
+}
+
+/* Column layout */
+.col-25 {
+    float: left;
+    width: 25%;
+    margin-top: 6px;
+}
+
+.col-50 {
+    float: left;
+    width: 50%;
+    margin-top: 6px;
+}
+
+.col-75 {
+    float: left;
+    width: 75%;
+    margin-top: 6px;
+}
+
+.row {
+    margin: 0;
+}
+
+/* Clear floats */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Responsive layout */
+@media screen and (max-width: 1200px) {
+    .col-50, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .col-25, .col-50, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+}
+
+/* Table styling */
+#ScansTable {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    width: 100%;
+    padding: 20px;
+}
+
+#ScansTable td, #ScansTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#ScansTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#ScansTable tr:hover {
+    background-color: #ddd;
+}
+
+#ScansTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(76, 107, 175);
+    color: white;
+}
+
+/* Body */
+body { 
+    padding: 1em;
+    background: #ffffff;
+}
+
+/* =============================== */
+/* AUTOCOMPLETE — REQUIRED FIXES   */
+/* =============================== */
+
+.autocomplete {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 9999;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.autocomplete-item {
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-item:hover {
+    background-color: #e9e9e9;
+}
+
+/* Ensure dropdown is clickable above floats */
+input[type="text"], select, textarea {
+    position: relative;
+    z-index: 1;
+}

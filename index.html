@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ink & Supplies Order Form</title>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- ============================
+         AUTOCOMPLETE CSS (CORRECT)
+    ============================= -->
+    <style>
+        .autocomplete {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            border: 1px solid #d4d4d4;
+            border-bottom: none;
+            border-top: none;
+            z-index: 9999;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .autocomplete-item {
+            padding: 8px;
+            cursor: pointer;
+            background-color: #fff;
+            border-bottom: 1px solid #d4d4d4;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #e9e9e9;
+        }
+    </style>
+</head>
+
+<body class="p-4">
+
+    <!-- ============================
+         PAGE HEADER + NAVIGATION
+    ============================= -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0">Ink & Supplies Order Form</h2>
+
+        <button class="btn btn-secondary" onclick="window.location.href='orders.html'">
+            View All Orders
+        </button>
+    </div>
+
+    <!-- ============================
+         ORDER HEADER SECTION
+    ============================= -->
+    <div class="row mb-3">
+
+        <div class="col-md-3">
+            <label>Order Number</label>
+            <input id="orderNumber" class="form-control" readonly>
+        </div>
+
+        <div class="col-md-3">
+            <label>Date</label>
+            <input id="orderDate" type="date" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <label>Supplier</label>
+            <select id="supplier" class="form-control"></select>
+        </div>
+
+        <div class="col-md-3">
+            <label>Status</label>
+            <select id="orderStatus" class="form-control">
+                <option>Pending</option>
+                <option>Partially Supplied</option>
+                <option>Fully Supplied</option>
+            </select>
+        </div>
+
+    </div>
+
+    <!-- ============================
+         ITEMS TABLE
+    ============================= -->
+    <h4>Items to Order</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Item Type</th>
+                <th>Code</th>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Expected Date</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+
+        <tbody id="itemsBody">
+            <!-- Rows injected by JS -->
+        </tbody>
+    </table>
+
+    <button id="addItemRow" class="btn btn-success mb-3">Add Item</button>
+    <button id="clearItems" class="btn btn-danger mb-3">Clear All Items</button>
+
+    <!-- ============================
+         COMMENTS SECTION
+    ============================= -->
+    <div class="mb-3">
+        <label>General Comments</label>
+        <textarea id="orderComments" class="form-control" rows="2"></textarea>
+    </div>
+
+    <!-- ============================
+         ACTION BUTTONS
+    ============================= -->
+    <div class="d-flex gap-3">
+        <button id="saveOrder" class="btn btn-primary">Save Order</button>
+        <button id="sendEmail" class="btn btn-info">Send Email</button>
+    </div>
+
+    <!-- ============================
+         MAIN SCRIPT
+    ============================= -->
+    <script src="js/mainv3.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+[
+  {
+    "name": "DIC New Zealand",
+    "email": "dicnz.customerservices@dic.com.au",
+    "type": "Ink Supplier"
+  },
+  {
+    "name": "Flint Group",
+    "email": "orders.nz@flintgrp.com",
+    "type": "Ink Supplier"
+  },
+  {
+    "name": "Packaging Products",
+    "email": "sales@packprod.co.nz",
+    "type": "Packaging Supplier"
+  }
+]
