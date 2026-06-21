@@ -44,7 +44,7 @@
   { "code": "ZV108721", "name": "PMS2337 Pink" },
   { "code": "PMS717", "name": "Orange" },
   { "code": "ZGV12014", "name": "PMS7623 Red" },
-  { "code": "ZV108732", "name": "PMS2141 Blue" },
+  { "code": "ZV108723", "name": "PMS2141 Blue" },
   { "code": "ZV108732", "name": "PMS7692 Blue" },
   { "code": "ZV108141", "name": "PMS7533 Brown" },
   { "code": "ZV108662", "name": "PMS1585 Orange" },
@@ -128,9 +128,13 @@
   { "code": "pms7505", "name": "Brown" },
   { "code": "PMS497", "name": "Brown" },
   { "code": "PMS7687", "name": "Blue" },
-  { "code": "PMS199", "name": "Red" },
+  { "code": "ZV108822", "name": "PMS199 Red" },
   { "code": "ZV109080", "name": "PMS7585 Brown" },
   { "code": "ZV108083", "name": "PMS186 Red" },
   { "code": "ZV109081", "name": "PMS9202 Lt.Brown" },
-  { "code": "ZV108592", "name": "Cadbury Purple" }
+  { "code": "ZV108592", "name": "Cadbury Purple" },
+  { "code": "ZAN20132", "name": "C Primer" },
+  { "code": "ZAN19268", "name": "Slow Process Reducer" },
+  { "code": "ZAN21033", "name": "C Primer Reducer" }
+
 ]
