@@ -42,7 +42,14 @@ async function init() {
     await loadOrderNumber();
     autoFillDate();
     setupButtons();
-    addItemRow(); // start with one row
+
+    // Load order if editing
+    await loadOrderForEditing();
+
+    // Only add a blank row if NOT editing
+    if (!isEditing) {
+        addItemRow();
+    }
 }
 
 /* ============================================================
@@ -62,7 +69,7 @@ async function loadInkCodes() {
 }
 
 /* ============================================================
-   NEW AUTOCOMPLETE PER ROW (INKSCAN STYLE, STABLE)
+   NEW AUTOCOMPLETE PER ROW
 ============================================================ */
 function setupRowAutocomplete(codeInput, descInput) {
     const wrapper = codeInput.closest(".autocomplete");
@@ -71,7 +78,6 @@ function setupRowAutocomplete(codeInput, descInput) {
         return;
     }
 
-    // Create dropdown container
     let listEl = wrapper.querySelector(".autocomplete-items");
     if (!listEl) {
         listEl = document.createElement("div");
@@ -97,14 +103,23 @@ function setupRowAutocomplete(codeInput, descInput) {
             div.className = "autocomplete-item";
             div.textContent = `${item.code} - ${item.name}`;
 
-            // CLEAN CLICK HANDLER — InkScan style
             div.addEventListener("mousedown", () => {
                 codeInput.value = item.code;
                 descInput.value = item.name;
 
-                // Prevent input event from firing again
-                codeInput.dataset.lock = "1";
+                const row = codeInput.closest("tr");
+                const typeSelect = row.querySelector(".item-type");
+                const supplierSelect = document.getElementById("supplier");
 
+                if (SOLVENT_CODES.includes(item.code)) {
+                    typeSelect.value = "Solvent";
+                    supplierSelect.value = "DKSH";
+                } else {
+                    typeSelect.value = "Ink";
+                    supplierSelect.value = "DIC";
+                }
+
+                codeInput.dataset.lock = "1";
                 clearList();
             });
 
@@ -114,7 +129,6 @@ function setupRowAutocomplete(codeInput, descInput) {
         listEl.style.display = "block";
     }
 
-    // INPUT HANDLER
     codeInput.addEventListener("input", () => {
         if (codeInput.dataset.lock === "1") {
             codeInput.dataset.lock = "0";
@@ -147,7 +161,6 @@ function setupRowAutocomplete(codeInput, descInput) {
         showList(matches);
     });
 
-    // CLOSE ON BLUR
     codeInput.addEventListener("blur", () => {
         setTimeout(() => {
             if (!wrapper.contains(document.activeElement)) {
@@ -156,25 +169,6 @@ function setupRowAutocomplete(codeInput, descInput) {
         }, 120);
     });
 }
-
-
-/* ============================================================
-   SETUP BUTTONS
-============================================================ */
-function setupButtons() {
-    document.getElementById("addItemRow").addEventListener("click", addItemRow);
-    document.getElementById("clearItems").addEventListener("click", clearAllItems);
-
-    document.getElementById("saveOrder").addEventListener("click", () => {
-        saveOrder().catch(err => {
-            console.error("Error saving order:", err);
-            alert("Error saving order.");
-        });
-    });
-
-    document.getElementById("sendEmail").addEventListener("click", sendEmail);
-}
-
 /* ============================================================
    INDEXEDDB SETUP
 ============================================================ */
@@ -234,6 +228,40 @@ function saveOrderToDB(order) {
         request.onerror = () => reject(request.error);
     });
 }
+
+/* ============================================================
+   LOAD ORDER FOR EDITING
+============================================================ */
+async function loadOrderForEditing() {
+    const editNum = localStorage.getItem("editOrderNumber");
+    if (!editNum) return;
+
+    const order = await getOrderByNumber(editNum);
+    if (!order) return;
+
+    isEditing = true;
+    currentOrderNumber = order.number;
+
+    document.getElementById("orderNumber").value = order.number;
+    document.getElementById("orderDate").value = order.date;
+    document.getElementById("supplier").value = order.supplier;
+    document.getElementById("orderStatus").value = order.status;
+    document.getElementById("orderComments").value = order.comments || "";
+
+    const tbody = document.getElementById("itemsBody");
+    tbody.innerHTML = "";
+
+    order.items.forEach(item => {
+        const tr = addItemRow();
+
+        tr.querySelector(".item-type").value = item.type;
+        tr.querySelector(".code-input").value = item.code;
+        tr.querySelector(".desc-input").value = item.desc;
+        tr.querySelector(".qty-input").value = item.qty;
+        tr.querySelector(".date-input").value = item.expectedDate;
+    });
+}
+
 /* ============================================================
    AUTO-FILL DATE
 ============================================================ */
@@ -256,21 +284,19 @@ function populateSuppliers() {
         supplierSelect.appendChild(opt);
     });
 }
-
 /* ============================================================
-   ORDER NUMBER HANDLING
+   ORDER NUMBER HANDLING (LAM###)
 ============================================================ */
 async function loadOrderNumber() {
-    // Simple approach: find max existing TAB number and increment
     const orders = await getAllOrders();
-    const tabOrders = orders
+    const lamOrders = orders
         .map(o => o.number)
         .filter(n => typeof n === "string" && n.startsWith("LAM"));
 
     let nextNumber = 1;
-    if (tabOrders.length) {
+    if (lamOrders.length) {
         const maxNum = Math.max(
-            ...tabOrders.map(n => parseInt(n.replace("LAM", ""), 10) || 0)
+            ...lamOrders.map(n => parseInt(n.replace("LAM", ""), 10) || 0)
         );
         nextNumber = maxNum + 1;
     }
@@ -327,6 +353,8 @@ function addItemRow() {
     removeBtn.addEventListener("click", () => {
         tr.remove();
     });
+
+    return tr;
 }
 
 function clearAllItems() {
@@ -375,6 +403,7 @@ function collectOrderData() {
         items
     };
 }
+
 /* ============================================================
    SAVE ORDER
 ============================================================ */
@@ -387,6 +416,10 @@ async function saveOrder() {
     }
 
     await saveOrderToDB(order);
+
+    localStorage.removeItem("editOrderNumber");
+    isEditing = false;
+
     alert("Order saved.");
 }
 
@@ -401,11 +434,9 @@ function sendEmail() {
         return;
     }
 
-    // TO: DIC + DKSH from SUPPLIERS, all others fallback to Oggi
     const supplierEmails = SUPPLIERS[order.supplier] || ["oggiowens@outlook.com"];
     const to = supplierEmails.join(",");
 
-    // CC: Iris ALWAYS
     const cc = "iris@lamprint.co.nz";
 
     let subject = `Ink/Supplies Order ${order.number} - ${order.supplier}`;
@@ -433,8 +464,31 @@ function sendEmail() {
 
     const body = encodeURIComponent(bodyLines.join("\n"));
 
-    // Final mailto with CC included
     const mailto = `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${body}`;
 
     window.location.href = mailto;
+}
+
+/* ============================================================
+   SETUP BUTTONS
+============================================================ */
+function setupButtons() {
+    document.getElementById("addItemRow").addEventListener("click", addItemRow);
+    document.getElementById("clearItems").addEventListener("click", clearAllItems);
+
+    document.getElementById("saveOrder").addEventListener("click", () => {
+        saveOrder().catch(err => {
+            console.error("Error saving order:", err);
+            alert("Error saving order.");
+        });
+    });
+
+    document.getElementById("sendEmail").addEventListener("click", sendEmail);
+
+    // ⭐ NEW ORDER BUTTON
+    document.getElementById("newOrder").addEventListener("click", () => {
+        localStorage.removeItem("editOrderNumber");
+        isEditing = false;
+        window.location.reload();
+    });
 }

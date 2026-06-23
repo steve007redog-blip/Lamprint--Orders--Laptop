@@ -14,6 +14,15 @@ function openDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("LamprintOrdersDB", 1);
 
+        // ⭐ Ensure the "orders" object store exists
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("orders")) {
+                const store = db.createObjectStore("orders", { keyPath: "number" });
+                store.createIndex("number", "number", { unique: true });
+            }
+        };
+
         request.onsuccess = (event) => {
             db = event.target.result;
             resolve();
@@ -86,7 +95,7 @@ function renderOrders(list) {
 }
 
 /* ============================================================
-   FORMAT ITEMS (Option B + Divider Line)
+   FORMAT ITEMS (Corrected field names)
 ============================================================ */
 function formatItems(items) {
     if (!items || items.length === 0) return "No items";
@@ -94,11 +103,11 @@ function formatItems(items) {
     return items
         .map(item => {
             return (
-                `Type: ${item.itemType}\n` +
+                `Type: ${item.type}\n` +
                 `Code: ${item.code}\n` +
-                `Desc: ${item.description}\n` +
+                `Desc: ${item.desc}\n` +
                 `Qty: ${item.qty}\n` +
-                `Expected: ${item.expected}\n` +
+                `Expected: ${item.expectedDate}\n` +
                 `-------------------------`
             );
         })
